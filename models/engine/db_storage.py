@@ -70,7 +70,7 @@ class DBStorage:
             if obj.id == id:
                 return obj
             
-    def cout(self, cls=None):
+    def count(self, cls=None):
         """Returns the number of objects in storage"""
         if cls is None:
             return len(self.all())
