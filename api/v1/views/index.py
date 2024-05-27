@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-""" index route """
+"""create app_views instance"""
 
 from api.v1.views import app_views
 from flask import jsonify
