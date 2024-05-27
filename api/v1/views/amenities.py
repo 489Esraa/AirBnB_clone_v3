@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+""" amenities route """
+
 from flask import jsonify, request
 from models import storage
 from models.amenity import Amenity

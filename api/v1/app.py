@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from models import storage
 import os
 from flask import jsonify
+from flask_cors import CORS
 
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ if __name__ == "__main__":
         API_PORT = "5000"
     app.run(host=API_HOST, port=API_PORT, threaded=True)
 
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 app.register_blueprint(app_views)
 
@@ -34,4 +36,5 @@ def teardown_db(exception):
 
 @app.errorhandler(404)
 def not_found(error):
+    """ returns 404 Error """
     return jsonify({"error": "Not found"}), 404
