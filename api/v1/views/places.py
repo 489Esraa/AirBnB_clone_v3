@@ -2,7 +2,7 @@
 
 """ places route """
 
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from models import storage
 from models.place import Place
 from models.city import City
@@ -39,9 +39,9 @@ def delete_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         return jsonify({"error": "Not found"}), 404
-    place.delete()
+    storage.delete(place)
     storage.save()
-    return jsonify({})
+    return jsonify({}), 200
 
 
 @app_views.route(
@@ -51,7 +51,7 @@ def create_place(city_id):
     """Creates a Place object"""
     city = storage.get(City, city_id)
     if city is None:
-        return jsonify({"error": "Not found"}), 404
+        abort(404)
     if not request.get_json():
         return jsonify({"error": "Not a JSON"}), 400
     if "user_id" not in request.get_json():
@@ -70,7 +70,7 @@ def update_place(place_id):
     """Updates a Place object"""
     place = storage.get(Place, place_id)
     if place is None:
-        return jsonify({"error": "Not found"}), 404
+        abort(404)
     if not request.get_json():
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in request.get_json().items():
