@@ -4,6 +4,8 @@
 
 from api.v1.views import app_views
 from flask import jsonify
+from models.user import User
+from models import storage
 
 
 @app_views.route("/status", strict_slashes=False)
@@ -15,8 +17,15 @@ def index():
 @app_views.route("/stats", strict_slashes=False)
 def stats():
     """retrieves the number of each objects by type"""
-    from models.user import User
-
-    stats = {}
-    stats["users"] = User.count()
-    return jsonify(stats)
+    hbnbclasses = {
+        "amenities": "Amenity",
+        "cities": "City",
+        "places": "Place",
+        "reviews": "Review",
+        "states": "State",
+        "users": "User"
+    }
+    dict_count = {}
+    for k, v in hbnbclasses.items():
+        dict_count[k] = storage.count(v)
+    return jsonify(dict_count)
