@@ -10,11 +10,12 @@ from flask import jsonify
 from flask_cors import CORS
 
 
-#the instance of flask
+# the instance of flask
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 app.register_blueprint(app_views, url_prefix="/api/v1")
+
 
 @app.teardown_appcontext
 def teardown_db(exception):
@@ -24,8 +25,9 @@ def teardown_db(exception):
 
 @app.errorhandler(404)
 def not_found(error):
-    """Returns 404 Error """
+    """Returns 404 Error"""
     return jsonify({"error": "Not found"}), 404
+
 
 if os.getenv("HBNB_API_HOST"):
     API_HOST = os.getenv("HBNB_API_HOST")
