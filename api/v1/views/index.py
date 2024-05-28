@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """create app_views instance"""
 
 from api.v1.views import app_views
