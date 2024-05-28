@@ -11,6 +11,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
+
 @app_views.route("/status", strict_slashes=False)
 def index():
     """Returns a JSON object with the status of the API"""
@@ -26,7 +27,7 @@ def stats():
         "places": "Place",
         "reviews": "Review",
         "states": "State",
-        "users": "User"
+        "users": "User",
     }
     dict_count = {}
     for k, v in hbnbclasses.items():
