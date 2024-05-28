@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-""" states route """
+"""States route """
 
 from flask import jsonify, request
 from models import storage

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""create blueprint flask app"""
+"""Create blueprint flask app"""
 
 from flask import Blueprint
 
