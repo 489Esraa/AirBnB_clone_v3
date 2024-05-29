@@ -1,68 +1,71 @@
 #!/usr/bin/python3
-"""Manages RESTful API requests for City objects"""
-from flask import jsonify, abort, request
+"""State objects that handles all default RESTFul API actions"""
+
 from api.v1.views import app_views
 from models import storage
 from models.state import State
 from models.city import City
-from api.v1.views.base_actions import REST_actions
+from flask import abort, request, jsonify
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET'])
-def get_all_city(state_id):
-    """Returns City objects"""
-    state = storage.get(State, state_id)
-    if not state:
-        abort(404)
-    cities = list(map(lambda city: city.to_dict(), state.cities))
-    return jsonify(cities)
-
-
-@app_views.route('/cities/<city_id>', methods=['GET'])
-def get_city(city_id):
-    """returns a City object by its (Id)"""
-    city = REST_actions.get_by_id(City, city_id)
-    if city.get('status code') == 404:
-        abort(404)
-    return jsonify(city.get('object dict'))
-
-
-@app_views.route('/cities/<city_id>', methods=['DELETE'])
-def delete_city(city_id):
-    """deletes a City object by its (Id)"""
-    delete_response = REST_actions.delete(City, city_id)
-    if delete_response.get('status code') == 404:
-        abort(404)
-    return jsonify({})
-
-
-@app_views.route('/states/<state_id>/cities', methods=['POST'])
-def post_city(state_id):
-    """creates a new City"""
+@app_views.route("/states/<state_id>/cities", strict_slashes=False, methods=["GET"])
+def cities(state_id):
+    """show cities"""
+    cities_list = []
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    request_body = request.get_json()
-
-    if request_body is None:
-        abort(400, "Not a JSON")
-    if not request_body.get('name'):
-        abort(400, "Missing name")
-    new_city = City(name=request_body.get('name'), state_id=state_id)
-    post_response = REST_actions.post(new_city)
-    return post_response.get('object dict'), post_response.get('status code')
+    cities = state.cities
+    for city in cities:
+        cities_list.append(city.to_dict())
+    return jsonify(cities_list)
 
 
-@app_views.route('/cities/<city_id>', methods=['PUT'])
-def put_city(city_id):
-    """ updates the City object by its (Id) """
-    request_body = request.get_json()
-    if not request_body:
-        abort(400, "Not a JSON")
-
-    args_to_ignore = ['id', 'created_at', 'updated_at']
-    put_response = REST_actions.put(
-        City, city_id, args_to_ignore, request_body)
-    if put_response.get('status code') == 404:
+@app_views.route("/cities/<city_id>", strict_slashes=False, methods=["GET"])
+def cities_id(city_id):
+    """Retrieves a City object"""
+    city = storage.get(City, city_id)
+    if city is None:
         abort(404)
-    return put_response.get('object dict'), put_response.get('status code')
+    return jsonify(city.to_dict())
+
+
+@app_views.route("/cities/<city_id>", strict_slashes=False, methods=["DELETE"])
+def city_delete(city_id):
+    """delete method"""
+    obj = storage.get(City, city_id)
+    if obj is None:
+        abort(404)
+    storage.delete(obj)
+    storage.save()
+    return jsonify({}), 200
+
+
+@app_views.route("/states/<state_id>/cities", strict_slashes=False, methods=["POST"])
+def create_city(state_id):
+    """create a new post req"""
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
+    data = request.get_json(force=True, silent=True)
+    if not data:
+        abort(400, "Not a JSON")
+    if "name" not in data:
+        abort(400, "Missing name")
+    new_state = City(state_id=state.id, **data)
+    new_state.save()
+    return jsonify(new_state.to_dict()), 201
+
+
+@app_views.route("/cities/<city_id>", strict_slashes=False, methods=["PUT"])
+def update_city(city_id):
+    """update city"""
+    obj = storage.get(City, city_id)
+    if obj is None:
+        abort(404)
+    data = request.get_json(force=True, silent=True)
+    if not data:
+        abort(400, "Not a JSON")
+    obj.name = data.get("name", obj.name)
+    obj.save()
+    return jsonify(obj.to_dict()), 200
