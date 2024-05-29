@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" states.py that handles all default RestFul API actions"""
+"""States.py that handles all default RestFul API actions"""
 
 from api.v1.views import app_views
 from models import storage
