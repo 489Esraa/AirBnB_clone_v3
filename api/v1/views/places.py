@@ -59,8 +59,8 @@ def create_place(city_id):
     if "name" not in request.get_json():
         return jsonify({"error": "Missing name"}), 400
     data = request.get_json()
-    data["city_id"] = city_id
     place = Place(**data)
+    place.city_id = city_id
     place.save()
     return jsonify(place.to_dict()), 201
 
