@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-"""States route """
+"""Create a new view for City objects that handles all default RESTFul API actions:"""
 
 from flask import jsonify, request
 from models import storage
